@@ -1,0 +1,22 @@
+[
+  {
+    "ID": 0,
+    "Damage": 10,
+    "ShootCD": 0.1,
+    "MaxBulletCount": 30,
+    "ReloadCD": 5,
+    "WeaponType": 0,
+    "BulletFlySpeed": 50.0,
+    "BulletGravity": -9.81
+  },
+  {
+    "ID": 1,
+    "ShootCD": 5.0,
+    "Damage": 20,
+    "MaxBulletCount": 50,
+    "ReloadCD": 1,
+    "WeaponType": 1,
+    "BulletFlySpeed": 50.0,
+    "BulletGravity": -98.1
+  }
+]
