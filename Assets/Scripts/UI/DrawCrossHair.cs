@@ -30,7 +30,7 @@ public class DrawCrossHair : MonoBehaviour {
         minSize = new Vector2(minDistance, minDistance);
         maxSize = new Vector2(maxDistance, maxDistance);
         StartCoroutine(Narrow());
-        
+        EventControl.Instance.Register(EventType.GameOverPlayerUI, Hide);
     }
 
     public void Expand(float distancePlus) {

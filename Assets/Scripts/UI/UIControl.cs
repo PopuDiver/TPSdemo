@@ -27,9 +27,9 @@ public class UIControl : MonoBehaviour {
         }
         textAmmoLeft = transform.Find("PanelAmmo/TextAmmoLeft").GetComponent<Text>();
         textAmmoTotal = transform.Find("PanelAmmo/TextAmmoTotal").GetComponent<Text>();
-        PlayerController_Client.GetInstence().AddEvent(UpdateAmmoDisplay);
-        PlayerController_Client.GetInstence().AddEvent(HealthChange);
-        PlayerController_Client.GetInstence().AddEvent(ShowOverImage);
+        EventControl.Instance.Register<int, int>(EventType.PlayerAttack, UpdateAmmoDisplay);
+        EventControl.Instance.Register<float>(EventType.PlayerHealthChange, HealthChange);
+        EventControl.Instance.Register<string>(EventType.GameOverPlayerUI, ShowOverImage);
     }
     
     private void Start() {

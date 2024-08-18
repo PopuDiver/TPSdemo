@@ -57,8 +57,6 @@ public class PlayerController_Client : MonoBehaviour {
     [Header("对象池")]
     private ObjectPool<BulletMove> bulletPool;
     
-    private event Action<int, int> OnPlayerAttackEventHandle;
-    private event Action<float> OnPlayerHealthChangeEventHandle;
     private event Action<string> OnGameOverPlayerUIEventHandle;
     private event Action<int> onPlayerTakeDamageEventHandle;
     
@@ -75,15 +73,7 @@ public class PlayerController_Client : MonoBehaviour {
     public GameObject FireObj {
         get { return fireObj; }
     }
-
-    public void AddEvent(Action<int, int> action) {
-        OnPlayerAttackEventHandle = action;
-    }
-
-    public void AddEvent(Action<float> action) {
-        OnPlayerHealthChangeEventHandle = action;
-    }
-
+    
     public void AddEvent(Action<string> action) {
         OnGameOverPlayerUIEventHandle += action;
     }
@@ -108,9 +98,9 @@ public class PlayerController_Client : MonoBehaviour {
 
         if (playerUI == null) {
             playerUI = Instantiate(uiPrefab, Vector2.zero, Quaternion.identity);
-            OnPlayerAttackEventHandle(weapon.BulletCount, weapon.MaxBulletCount);
+            EventControl.Instance.Invoke(EventType.PlayerAttack, weapon.BulletCount, weapon.MaxBulletCount);
         } else {
-            OnPlayerAttackEventHandle(weapon.BulletCount, weapon.MaxBulletCount);
+            EventControl.Instance.Invoke(EventType.PlayerAttack, weapon.BulletCount, weapon.MaxBulletCount);
         }
 
         Animator animator = this.playerDataNetObj.GetComponent<Animator>();
@@ -405,7 +395,7 @@ public class PlayerController_Client : MonoBehaviour {
             CharacterReload(true);
         }
 
-        OnPlayerAttackEventHandle(weapon.BulletCount, weapon.MaxBulletCount);
+        EventControl.Instance.Invoke(EventType.PlayerAttack, weapon.BulletCount, weapon.MaxBulletCount);
 
         DrawCrossHair.instance.Expand(30);
 
@@ -443,7 +433,7 @@ public class PlayerController_Client : MonoBehaviour {
     IEnumerator Reload() {
         yield return new WaitForSeconds(weapon.ReloadCD);
         weapon.BulletCount = weapon.MaxBulletCount;
-        OnPlayerAttackEventHandle(weapon.BulletCount, weapon.MaxBulletCount);
+        EventControl.Instance.Invoke(EventType.PlayerAttack, weapon.BulletCount, weapon.MaxBulletCount);
         isReload = false;
         ClientOtherPlayerAnimSetBool(playerID, "isReload", isReload);
         if (isAiming) {
@@ -494,12 +484,11 @@ public class PlayerController_Client : MonoBehaviour {
     public void ShowOverImage(int playerId) {
         if (playerDataNet.PlayerID == playerId) {
             string s = "恭喜您获得了胜利，祝您武运昌隆！！";
-            OnGameOverPlayerUIEventHandle(s);
+            EventControl.Instance.Invoke(EventType.GameOverPlayerUI, s);
         } else {
             string s = string.Format("游戏结束，获胜者为：{0}号玩家\n请大家继续努力！", playerId);
-            OnGameOverPlayerUIEventHandle(s);
+            EventControl.Instance.Invoke(EventType.GameOverPlayerUI, s);
         }
-        DrawCrossHair.instance.Hide();
     }
 
     public void PlayerDead(string name, bool flag) {
@@ -528,9 +517,9 @@ public class PlayerController_Client : MonoBehaviour {
     public void OnHealthChanged(int newHealth, int maxHealth) {
         if (playerUI == null) {
             playerUI = Instantiate(uiPrefab, Vector2.zero, Quaternion.identity);
-            OnPlayerHealthChangeEventHandle(newHealth * 1.0f / maxHealth);
+            EventControl.Instance.Invoke(EventType.PlayerHealthChange, newHealth * 1.0f / maxHealth);
         } else {
-            OnPlayerHealthChangeEventHandle(newHealth * 1.0f / maxHealth);
+            EventControl.Instance.Invoke(EventType.PlayerHealthChange, newHealth * 1.0f / maxHealth);
         }
     }
 
