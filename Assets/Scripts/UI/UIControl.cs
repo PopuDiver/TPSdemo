@@ -27,15 +27,19 @@ public class UIControl : MonoBehaviour {
         }
         textAmmoLeft = transform.Find("PanelAmmo/TextAmmoLeft").GetComponent<Text>();
         textAmmoTotal = transform.Find("PanelAmmo/TextAmmoTotal").GetComponent<Text>();
-        EventControl.Instance.Register<int, int>(EventType.PlayerAttack, UpdateAmmoDisplay);
-        EventControl.Instance.Register<float>(EventType.PlayerHealthChange, HealthChange);
-        EventControl.Instance.Register<string>(EventType.GameOverPlayerUI, ShowOverImage);
     }
     
     private void Start() {
         fullText = ruleText.text;
         ruleText.text = "";
         StartCoroutine(ShowRuleText());
+    }
+
+    private void OnEnable()
+    {
+        EventControl.Instance.Register<int, int>(EventType.PlayerAttack, UpdateAmmoDisplay);
+        EventControl.Instance.Register<float>(EventType.PlayerHealthChange, HealthChange);
+        EventControl.Instance.Register<string>(EventType.GameOverPlayerUI, ShowOverImage);
     }
 
     private void Update() {
@@ -54,6 +58,13 @@ public class UIControl : MonoBehaviour {
                 isStartFade = false;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        EventControl.Instance.UnRegister(EventType.PlayerAttack);
+        EventControl.Instance.UnRegister(EventType.PlayerHealthChange);
+        EventControl.Instance.UnRegister(EventType.GameOverPlayerUI);
     }
 
     public static UIControl GetInstance() {
