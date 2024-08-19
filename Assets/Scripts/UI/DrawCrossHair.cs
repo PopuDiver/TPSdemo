@@ -30,14 +30,18 @@ public class DrawCrossHair : MonoBehaviour {
         minSize = new Vector2(minDistance, minDistance);
         maxSize = new Vector2(maxDistance, maxDistance);
         StartCoroutine(Narrow());
+        EventControl.Instance.Register<float>(EventType.PlayerAttackCrossUIChange, Expand);
         EventControl.Instance.Register(EventType.GameOverPlayerUI, Hide);
+        EventControl.Instance.Register<bool>(EventType.PlayerIsAiming, IsAiming);
+        EventControl.Instance.Register(EventType.PlayerAttackHit, Rot);
     }
 
     public void Expand(float distancePlus) {
-        if (minDistance + distancePlus < maxDistance)
+        if (minDistance + distancePlus < maxDistance) {
             rectTrans.sizeDelta += new Vector2(distancePlus, distancePlus);
-        else
+        } else {
             rectTrans.sizeDelta = new Vector2(maxDistance, maxDistance);
+        }
     }
 
     public void Rot() {
@@ -70,6 +74,14 @@ public class DrawCrossHair : MonoBehaviour {
         }
     }
 
+    public void IsAiming(bool isAiming) {
+        if (isAiming) {
+            Hide();
+        } else {
+            Show();
+        }
+    }
+    
     public void Hide() {
         rectTrans.anchoredPosition = new Vector2(1000, 0);
     }

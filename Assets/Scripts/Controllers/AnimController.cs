@@ -7,12 +7,16 @@ using UnityEditor.Animations;
 #endif
 
 public class AnimController : MonoBehaviour {
-    public static AnimController instance;
+    private static AnimController instance;
     
     private void Awake() {
         if (instance == null) {
             instance = this;
         }
+    }
+
+    public static AnimController Instance {
+        get { return instance; }
     }
     
     public void SetPlayerAnimatorSpeed(Animator animator, int layer, string stateName, float speed) {

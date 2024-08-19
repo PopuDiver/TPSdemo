@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-public class ObjectPoolManager : MonoBehaviour {
+public class ObjectPoolManager {
+    private static ObjectPoolManager instance;
     private Dictionary<Type, object> poolDictionary = new();
 
     public ObjectPool<T> GetOrCreatePool<T>(T prefab, int initialSize, Transform parent = null) where T : MonoBehaviour {
@@ -19,6 +18,15 @@ public class ObjectPoolManager : MonoBehaviour {
         }
     }
 
+    public static ObjectPoolManager Instance {
+        get {
+            if (null == instance) {
+                instance = new ObjectPoolManager();
+            }
+            return instance;
+        }
+    }
+    
     public ObjectPool<T> GetPool<T>() where T : MonoBehaviour {
         Type type = typeof(T);
 

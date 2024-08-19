@@ -45,14 +45,14 @@ public class PlayerDataNet : NetworkBehaviour {
         }
         
         if (isLocalPlayer) {
-            PlayerController_Client.GetInstence().InitPlayerDataNet(GetPlayerDataObj());
+            PlayerController_Client.Instance.InitPlayerDataNet(GetPlayerDataObj());
             isInit = true;
-            PlayerController_Client.GetInstence().InitTransform();
+            PlayerController_Client.Instance.InitTransform();
         }
         
         if (isClient) {
-            DataCentreController.GetInstance().PlayerAddDataClient(GetPlayerData());
-            PlayerController_Client.GetInstence().ClientAddPlayerModel();
+            DataCentreController.Instance().PlayerAddDataClient(GetPlayerData());
+            PlayerController_Client.Instance.ClientAddPlayerModel();
         } else {
             Debug.Log(" 在 PlayerData.Awake 中 PlayerController_Client.instance == null || isClient == false ");
         }
@@ -114,13 +114,12 @@ public class PlayerDataNet : NetworkBehaviour {
         RpcPlayerDead(false);
     }
 
-    public void PlayerTransformChange(Transform transform1) {
+    public void PlayerTransformChange(int playerId, Transform transform1, float horizontal, float vertical) {
         Debug.Log(" PlayerTransformChange ");
         gameObject.transform.position = transform1.position;
         gameObject.transform.rotation = transform1.rotation;
         gameObject.transform.localScale = transform1.localScale;
-        if (isLocalPlayer)
-            CmdPlayerMoveSync(playerID);
+        CmdPlayerMoveSync(playerId, horizontal, vertical);
     }
 
     public void PlayerRotChange(Quaternion rotation) {
@@ -162,7 +161,7 @@ public class PlayerDataNet : NetworkBehaviour {
     public void OnHealthChanged(int oldHealth, int newHealth) {
         if (isLocalPlayer) {
             Debug.Log(" 血量改变回调进行 ");
-            PlayerController_Client.GetInstence().OnHealthChanged(newHealth, maxHealth);
+            PlayerController_Client.Instance.OnHealthChanged(newHealth, maxHealth);
         }
     }
 
@@ -171,38 +170,33 @@ public class PlayerDataNet : NetworkBehaviour {
     }
 
     [Command]
-    public void CmdPlayerMoveSync(int playerId) {
-        Debug.Log(" CmdPlayerMoveSync + playerId " + playerId);
-        if(playerId != playerID)
-            RpcPlayerMoveSync(playerId);
+    public void CmdPlayerMoveSync(int playerId, float horizontal, float vertical) {
+        Debug.Log(" CmdPlayerMoveSync + playerId + playerID " + playerId + playerID);
+        RpcPlayerMoveSync(playerId, horizontal, vertical);
     }
 
     [Command]
     public void CmdPlayerRotaSync(int playerId) {
         Debug.Log(" CmdPlayerRotaSync  ");
-        if(playerId != playerID)
-            RpcPlayerRotSync(playerId);
+        RpcPlayerRotSync(playerId);
     }
 
     [Command]
     public void CmdPlayerAnimSetFloatSync(int playerId, float x, float y) {
         Debug.Log(" CmdPlayerAnimSetFloatSync  ");
-        if(playerID != playerId)
-            RpcPlayerAnimSetFloatSync(playerId, x, y);
+        RpcPlayerAnimSetFloatSync(playerId, x, y);
     }
 
     [Command]
     public void CmdPlayerAnimSetBoolSync(int playerId, string name, bool flag) {
         Debug.Log(" CmdPlayerAnimSetBoolSync  ");
-        if(playerId != playerID)
-            RpcPlayerAnimSetBoolSync(playerId, name, flag);
+        RpcPlayerAnimSetBoolSync(playerId, name, flag);
     }
 
     [Command]
     public void CmdPlayerAnimSetTriggerlSync(int playerId, string name) {
         Debug.Log(" CmdPlayerAnimSetTriggerlSync  ");
-        if(playerId != playerID)
-            RpcPlayerAnimSetTriggerSync(playerId, name);
+        RpcPlayerAnimSetTriggerSync(playerId, name);
     }
 
     [Command]
@@ -220,78 +214,71 @@ public class PlayerDataNet : NetworkBehaviour {
         serverPlayerController.TakeDamage(weaponId, beAttackId, attackPlayerID);
     }
 
-    [Command]
-    public void CmdPlayerLeave(int playerId) {
-        RpcPlayerLeave(playerId);
-    }
-
     // ------------------------------------------------- 客户端 Command 方法 && 服务端 ClientRpc 方法分界线 ------------------------------------------------------
 
     [ClientRpc]
-    public void RpcPlayerMoveSync(int playerId) {
+    public void RpcPlayerMoveSync(int playerId, float horizontal, float vertical) {
         Debug.Log(" RpcPlayerMoveSync ");
-        PlayerController_Client.GetInstence().ClientOtherPlayerMove(playerId);
+        if (!isLocalPlayer) {
+            Debug.Log(" RpcPlayerMoveSync 1111 ");
+            PlayerController_Client.Instance.ClientOtherPlayerMove(playerId, horizontal, vertical);
+        }
     }
 
     [ClientRpc]
     public void RpcPlayerRotSync(int playerId) {
         Debug.Log(" RpcPlayerRotSync ");
-        if (PlayerController_Client.GetInstence() != null)
-            PlayerController_Client.GetInstence().ClientOtherPlayerRot(playerId);
+        if (PlayerController_Client.Instance != null && !isLocalPlayer)
+            PlayerController_Client.Instance.ClientOtherPlayerRot(playerId);
     }
 
     [ClientRpc]
     public void RpcPlayerAnimSetFloatSync(int playerId, float x, float y) {
         Debug.Log(" RpcPlayerAnimSetFloatSync ");
-        PlayerController_Client.GetInstence().ClientOtherPlayerAnimSetFloat(playerId, x, y);
+        if (!isLocalPlayer) 
+            PlayerController_Client.Instance.ClientOtherPlayerAnimSetFloat(playerId, x, y);
     }
 
     [ClientRpc]
     public void RpcPlayerAnimSetBoolSync(int playerId, string name, bool flag) {
         Debug.Log(" RpcPlayerAnimSetBoolSync ");
-        PlayerController_Client.GetInstence().ClientOtherPlayerAnimSetBool(playerId, name, flag);
+        if (!isLocalPlayer) 
+            PlayerController_Client.Instance.ClientOtherPlayerAnimSetBool(playerId, name, flag);
     }
 
     [ClientRpc]
     public void RpcPlayerSpawnBullet(Vector3 startPoint, Quaternion startRot, Vector3 dir, int weaponId) {
         Debug.Log(" RpcPlayerSpawnBullet ");
-        PlayerController_Client.GetInstence().ClientSpawnBullet(playerID, startPoint, startRot, dir, weaponId);
+        if (!isLocalPlayer) 
+            PlayerController_Client.Instance.ClientSpawnBullet(playerID, startPoint, startRot, dir, weaponId);
     }
 
     [ClientRpc]
     public void RpcGameOver(int playerId) {
         Debug.LogError(" 有玩家获得胜利，playerId =  " + playerId);
-        PlayerController_Client.GetInstence().ShowOverImage(playerId);
+        PlayerController_Client.Instance.ShowOverImage(playerId);
         Time.timeScale = 0;
     }
 
     [ClientRpc]
     public void RpcPlayerAnimSetTriggerSync(int playerId, string name) {
         Debug.Log(" RpcPlayerAnimSetTriggerSync ");
-        if (playerId != playerID) {
-            PlayerController_Client.GetInstence().ClientOtherPlayerAnimSetTrigger(name);
+        if (!isLocalPlayer)  {
+            PlayerController_Client.Instance.ClientOtherPlayerAnimSetTrigger(playerId, name);
         }
     }
 
     [ClientRpc]
     public void RpcSpawnEffect(int playerId, Vector3 startPos) {
         Debug.Log(" RpcSpawnEffect ");
-        PlayerController_Client.GetInstence().ClientSpawnEffect(playerId, startPos);
-    }
-
-    public void RpcPlayerLeave(int playerId) {
-        PlayerController_Client.GetInstence().ClientOtherPlayerLeave(playerId);
+        if (!isLocalPlayer) 
+            PlayerController_Client.Instance.ClientSpawnEffect(playerId, startPos);
     }
 
     [TargetRpc]
     public void RpcPlayerDead(bool isPlayerDead) {
         Debug.Log(" RpcPlayerDead ");
-        PlayerController_Client.GetInstence().PlayerDead("isPlayerDead", isPlayerDead);
-    }
-
-    private void OnDestroy() {
-        if (isLocalPlayer) {
-            CmdPlayerLeave(playerID);
-        }
+        if (!isLocalPlayer) 
+            PlayerController_Client.Instance.PlayerDead(playerID, "isPlayerDead", isPlayerDead);
     }
 }

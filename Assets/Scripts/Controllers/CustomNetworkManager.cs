@@ -62,7 +62,7 @@ public class CustomNetworkManager : NetworkManager {
         if (playerDataNet == null) {
             Debug.LogError(" 玩家的 PlayerData 类为空 ");
         } else {
-            DataCentreController.GetInstance().PlayerAddData(playerDataNet);
+            DataCentreController.Instance().PlayerAddData(playerDataNet);
         }
     }
 

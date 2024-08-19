@@ -22,12 +22,10 @@ public class DataCentreController : NetworkBehaviour {
         if (instance == null) {
             instance = this;
         }
-
-        if (instance != null) {
-            playerNetDictionary = new Dictionary<int, PlayerDataNet>();
-            rifleWeaponDataDictionary = new Dictionary<int, RifleWeapon>();
-            ReadJsonData();
-        }
+        
+        playerNetDictionary = new Dictionary<int, PlayerDataNet>();
+        rifleWeaponDataDictionary = new Dictionary<int, RifleWeapon>();
+        ReadJsonData();
 
         if (isServerOnly) {
             if (playerDictionaryServer == null) {
@@ -36,7 +34,7 @@ public class DataCentreController : NetworkBehaviour {
         }
     }
 
-    public static DataCentreController GetInstance() {
+    public static DataCentreController Instance() {
         return instance;
     }
     
@@ -61,10 +59,9 @@ public class DataCentreController : NetworkBehaviour {
             int damage = (int)temp["Damage"];
             int maxBulletCount = (int)temp["MaxBulletCount"];
             int reloadCd = (int)temp["ReloadCD"];
-            int weaponType = (int)temp["WeaponType"];
             double flySpeed = (double)temp["BulletFlySpeed"];
             double gravity = (double)temp["BulletGravity"];
-            RifleWeapon rifleWeapon = new RifleWeapon(id, shootCd, maxBulletCount, reloadCd, (WeaponType)weaponType, flySpeed, gravity, damage);
+            RifleWeapon rifleWeapon = new RifleWeapon(id, shootCd, maxBulletCount, reloadCd, flySpeed, gravity, damage);
             rifleWeaponDataDictionary.Add(rifleWeapon.ID, rifleWeapon);
         }
     }
@@ -76,10 +73,13 @@ public class DataCentreController : NetworkBehaviour {
     }
 
     public void PlayerAddDataClient(PlayerDataNet playerDataNet) {
+        Debug.LogError(" playerNetDictionary.Count 000 " + playerNetDictionary.Count);
         if (playerNetDictionary.ContainsKey(playerDataNet.PlayerID)) {
             return;
         }
+        Debug.LogError(" playerNetDictionary.Count 111 " + playerNetDictionary.Count);
         playerNetDictionary.Add(playerDataNet.PlayerID, playerDataNet);
+        Debug.LogError(" playerNetDictionary.Count 222 " + playerNetDictionary.Count);
     }
     
     public PlayerDataNet GetPlayerDataNet(int playerID) {

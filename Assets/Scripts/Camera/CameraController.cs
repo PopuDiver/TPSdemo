@@ -125,7 +125,7 @@ public class CameraController : NetworkBehaviour {
         } else {
             Debug.DrawLine(playerCamera.transform.position, hits[0].point, Color.red, 1f);
             playerCamera.transform.position = hits[0].point + playerCamera.transform.forward * 2.0f;
-            playerCamera.transform.LookAt(PlayerController_Client.GetInstence().FireObj.transform.position);
+            playerCamera.transform.LookAt(PlayerController_Client.Instance.FireObj.transform.position);
         }
     }
 

@@ -3134,6 +3134,7 @@ GameObject:
   - component: {fileID: 7514012557157410553}
   - component: {fileID: 1324446708900161003}
   - component: {fileID: -1324266625320186206}
+  - component: {fileID: -3074155526918711519}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3307,15 +3308,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPrefab: {fileID: 8112144509716030310, guid: fb4ea5a4b40236c4eaa1895e276a7c88, type: 3}
-  playerCamera: {fileID: 8112144509716030310, guid: fb4ea5a4b40236c4eaa1895e276a7c88, type: 3}
   bulletPrefab: {fileID: 6271364552646225798, guid: c8f1e711eeeaacd479d105d5cb6089da, type: 3}
   uiPrefab: {fileID: 8248954565305956927, guid: cb792d3ab486b064aad2e326691d1cb4, type: 3}
   fireObj: {fileID: 6815737129602402150}
   playerPrefab: {fileID: 5329042591112970856, guid: e512156e0e08e4644972bf5dcc856e9e, type: 3}
   weaponGameObject: {fileID: 2594152129123288894}
-  attackEffectPrefab: {fileID: 3859961642028103465, guid: d1eb85890c1740745b9e0c98bd0c8003, type: 3}
+  attackEffectPrefab: {fileID: -5180517042652419880, guid: d1eb85890c1740745b9e0c98bd0c8003, type: 3}
   rightHandGameObject: {fileID: 5329042591112774536}
-  ServerPlayerControlObjPrefab: {fileID: 5320494233716973480, guid: 0ede28410c04fa54f83d39e2f99f7ea1, type: 3}
 --- !u!114 &7514012557157410553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3441,6 +3440,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-3074155526918711519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5329042591112970856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dffe6fa3d7a78284d87daf24b6a06c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5329042591112972602
 GameObject:
   m_ObjectHideFlags: 0

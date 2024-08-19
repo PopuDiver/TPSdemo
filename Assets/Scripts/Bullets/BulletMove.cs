@@ -10,13 +10,12 @@ public class BulletMove : MonoBehaviour {
     private int weaponID;
     private int attackPlayerID;
 
-    // Start is called before the first frame update
     private void Start() {
         timeAlive = 0f;
     }
 
     public void SetBulletData(Vector3 vector3, int weaponId, int attackPlayerId) {
-        RifleWeapon rifleWeapon = DataCentreController.GetInstance().GetRifleWeapon(weaponId);
+        RifleWeapon rifleWeapon = DataCentreController.Instance().GetRifleWeapon(weaponId);
         m_Velocity = vector3 * (float)rifleWeapon.BulletFlySpeed;
         gravity = (float)rifleWeapon.BulletGravity;
         weaponID = weaponId;
@@ -26,9 +25,7 @@ public class BulletMove : MonoBehaviour {
     private void Update() {
         timeAlive += Time.deltaTime;
         if (timeAlive > lifeTime) {
-            // Destroy(gameObject);
-            PlayerController_Client.GetInstence().ReturnBullet(this);
-            // ObjectPool.instance.ReturnBulletObject(gameObject);
+            PlayerController_Client.Instance.ReturnBullet(this);
             return;
         }
 
@@ -43,18 +40,16 @@ public class BulletMove : MonoBehaviour {
             if (attackPlayerID != -1)
                 // 这里可以处理伤害等逻辑
                 if (hit.collider.CompareTag("Player")) {
-                    PlayerController_Client.GetInstence().SpawnEffect(hit.collider.gameObject.transform.position + new Vector3(0, 1, 0));
-                    DrawCrossHair.instance.Rot();
-                    int playerID = PlayerController_Client.GetInstence().GameObjToGetPlayerID(hit.collider.gameObject);
+                    int playerID = PlayerController_Client.Instance.GameObjToGetPlayerID(hit.collider.gameObject);
                     Debug.LogError(" ***************************** playerID " + playerID);
-                    PlayerDataNet playerDataNet = DataCentreController.GetInstance().GetPlayerDataNet(attackPlayerID);
+                    if(PlayerController_Client.Instance.GetPlayerID() == attackPlayerID)
+                        EventControl.Instance.Invoke(EventType.PlayerAttackHit);
+                    PlayerController_Client.Instance.ClientSpawnEffect(PlayerController_Client.Instance.GetPlayerID(), hit.collider.gameObject.transform.position + new Vector3(0, 1, 0));
+                    PlayerDataNet playerDataNet = DataCentreController.Instance().GetPlayerDataNet(attackPlayerID);
                     playerDataNet.TakeDamageClient(weaponID, playerID, attackPlayerID);
                 }
-
             // 销毁子弹
-            // Destroy(gameObject);
-            // ObjectPool.instance.ReturnBulletObject(gameObject);
-            PlayerController_Client.GetInstence().ReturnBullet(this);
+            PlayerController_Client.Instance.ReturnBullet(this);
         } else {
             // 如果没有碰撞，则更新子弹的位置
             transform.position = newPosition;

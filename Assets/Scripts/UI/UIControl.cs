@@ -37,7 +37,7 @@ public class UIControl : MonoBehaviour {
 
     private void OnEnable()
     {
-        EventControl.Instance.Register<int, int>(EventType.PlayerAttack, UpdateAmmoDisplay);
+        EventControl.Instance.Register<int, int>(EventType.PlayerAttackBulletCountUIChange, UpdateAmmoDisplay);
         EventControl.Instance.Register<float>(EventType.PlayerHealthChange, HealthChange);
         EventControl.Instance.Register<string>(EventType.GameOverPlayerUI, ShowOverImage);
     }
@@ -62,7 +62,7 @@ public class UIControl : MonoBehaviour {
 
     private void OnDisable()
     {
-        EventControl.Instance.UnRegister(EventType.PlayerAttack);
+        EventControl.Instance.UnRegister(EventType.PlayerAttackBulletCountUIChange);
         EventControl.Instance.UnRegister(EventType.PlayerHealthChange);
         EventControl.Instance.UnRegister(EventType.GameOverPlayerUI);
     }

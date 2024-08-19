@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public enum EventType {
-    PlayerAttack,
+    PlayerAttackCrossUIChange,
+    PlayerAttackBulletCountUIChange,
     PlayerHealthChange,
-    GameOverPlayerUI
+    GameOverPlayerUI,
+    PlayerIsAiming,
+    PlayerAttackHit
 }
 
 public class EventControl {
@@ -44,7 +48,7 @@ public class EventControl {
             }
         }
     }
-    
+
     public void Register(EventType eventType, Action onEvent) {
         if (!handlers.TryGetValue(eventType, out var deleList)) {
             deleList = new List<Delegate>();
